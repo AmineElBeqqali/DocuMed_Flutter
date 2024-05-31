@@ -1,0 +1,30 @@
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Don't have an account?"),
+                      TextButton(
+                        onPressed: () {
+                          _formKey.currentState?.reset();
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const Signup();
+                              },
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Signup",
+                          style: TextStyle(
+                            color: Colors.white, // Change text color to white
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+
+                  below the elevated button
