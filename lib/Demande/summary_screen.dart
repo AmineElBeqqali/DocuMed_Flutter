@@ -62,7 +62,17 @@ class SummaryScreen extends StatelessWidget {
         return;
       }
 
-      final File localFile = File('$selectedDirectory/$formattedDocumentName');
+      // Check if a file with the same name already exists and modify the name if necessary
+      String newFileName = formattedDocumentName;
+      String newPath = '$selectedDirectory/$newFileName';
+      int counter = 1;
+      while (File(newPath).existsSync()) {
+        newFileName = '${formattedDocumentName.replaceAll('.pdf', '')}($counter).pdf';
+        newPath = '$selectedDirectory/$newFileName';
+        counter++;
+      }
+
+      final File localFile = File(newPath);
 
       // Download the file
       await storageRef.writeToFile(localFile);
