@@ -1,10 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:documed/HomePage/HomePage.dart'; // Import your HomePage
 
 class SummaryScreen extends StatelessWidget {
@@ -31,21 +31,8 @@ class SummaryScreen extends StatelessWidget {
         return;
       }
 
-      // Map the document name from the dropdown to the exact file names in Firebase Storage
-      final Map<String, String> documentNameMap = {
-        'Attestation de réussite': 'Attestation_de_réussite.pdf',
-        'Attestation de scolarité': 'Attestation_de_scolarité.pdf',
-        'Diplôme': 'Diplôme.pdf',
-        'Relevé de notes (Semestre)': 'Relevé_de_notes_(Semestre).pdf',
-      };
-
-      final String? formattedDocumentName = documentNameMap[documentName];
-      if (formattedDocumentName == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid document name selected.')),
-        );
-        return;
-      }
+      // Transform the document name by replacing spaces with underscores
+      final String formattedDocumentName = documentName.replaceAll(' ', '_') + '.pdf';
 
       final String filePath = 'user_files/${user.uid}/$formattedDocumentName';
       final Reference storageRef = FirebaseStorage.instance.ref().child(filePath);
@@ -65,24 +52,17 @@ class SummaryScreen extends StatelessWidget {
         return;
       }
 
-      // Request storage permissions
-      var status = await Permission.storage.request();
-      if (!status.isGranted) {
+      // Use FilePicker to choose the download location
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      if (selectedDirectory == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Storage permission not granted.')),
+          SnackBar(content: Text('No directory selected.')),
         );
         return;
       }
 
-      final Directory? downloadDir = await getExternalStorageDirectory();
-      final String downloadPath = '${downloadDir?.path}/Download';
-      final Directory downloadDirectory = Directory(downloadPath);
-
-      if (!await downloadDirectory.exists()) {
-        await downloadDirectory.create(recursive: true);
-      }
-
-      final File localFile = File('${downloadDirectory.path}/$formattedDocumentName');
+      final File localFile = File('$selectedDirectory/$formattedDocumentName');
 
       // Download the file
       await storageRef.writeToFile(localFile);
