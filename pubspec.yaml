@@ -76,6 +76,7 @@ flutter:
     - images/UniChat.png
     - images/newspaper.png
     - images/pdf.png
+    - images/BG.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

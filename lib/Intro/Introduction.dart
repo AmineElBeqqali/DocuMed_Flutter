@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:documed/Login/SignIn.dart';
 
-
 class Intro extends StatelessWidget {
   const Intro({super.key});
 
@@ -27,9 +26,21 @@ class _IntroPage extends StatelessWidget {
     return Container(
       width: screenWidth,
       height: screenHeight,
-      decoration: BoxDecoration(color: Colors.lightBlueAccent),
       child: Stack(
         children: [
+          // Background image with opacity
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('images/BG.png'), // Ensure this path is correct
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.6), // Change the opacity here
+                  BlendMode.dstATop,
+                ),
+              ),
+            ),
+          ),
           Positioned(
             height: 300,
             right: 14,
